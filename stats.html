@@ -1,0 +1,163 @@
+<!doctype html>
+<html lang="en-GB">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Scan counter · Mukuru × Sixx</title>
+    <meta name="robots" content="noindex, nofollow" />
+    <meta name="theme-color" content="#F05423" />
+    <link
+      rel="icon"
+      href="assets/img/favicon.png"
+      type="image/png"
+      sizes="64x64"
+    />
+    <link rel="stylesheet" href="assets/css/style.css" />
+    <style>
+      .stats-wrap {
+        max-width: 34rem;
+        margin: 0 auto;
+        padding: 1.5rem 1.25rem 3rem;
+      }
+      .stats-grid {
+        display: grid;
+        gap: 0.8rem;
+        margin: 1.25rem 0;
+      }
+      .stat-box {
+        padding: 1.2rem 1.3rem;
+      }
+      .stat-box .num {
+        font-size: clamp(2.4rem, 11vw, 3.2rem);
+        line-height: 1;
+        font-weight: 800;
+        letter-spacing: -0.03em;
+        color: #373a36;
+        display: block;
+      }
+      .stat-box .label {
+        font-weight: 600;
+        color: #5c5f5b;
+        display: block;
+        margin-top: 0.3rem;
+      }
+      .stat-box.hl {
+        border: 2px solid #f05423;
+      }
+      .meta {
+        font-size: 0.9rem;
+        color: #5c5f5b;
+      }
+      .btn-row {
+        margin: 1rem 0;
+      }
+      code {
+        font-family: ui-monospace, Consolas, monospace;
+        font-size: 0.9em;
+      }
+      @media (min-width: 40em) {
+        .stats-grid {
+          grid-template-columns: repeat(3, 1fr);
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <header class="topbar">
+      <img
+        class="logo"
+        src="assets/img/mukuru-logo.png"
+        alt="Mukuru"
+        width="299"
+        height="95"
+      />
+      <span class="chip">Sixx Alfresco Bar &amp; Braai</span>
+    </header>
+    <main class="stats-wrap">
+      <h1 class="section-title" style="font-size: 1.8rem">
+        Welcome page scan counter
+      </h1>
+      <p class="meta">
+        Counts every open of the welcome page. Opens that came from the printed
+        QR code are counted under <strong>QR scans</strong>; a typed or shared
+        link counts under <strong>Typed or shared</strong>. Someone who opens
+        the page twice counts twice — nothing is stored on visitors' phones and
+        no cookies are used.
+      </p>
+
+      <div class="stats-grid" aria-live="polite">
+        <article class="card stat-box hl">
+          <span class="num" id="qr">–</span><span class="label">QR scans</span>
+        </article>
+        <article class="card stat-box">
+          <span class="num" id="direct">–</span
+          ><span class="label">Typed or shared</span>
+        </article>
+        <article class="card stat-box">
+          <span class="num" id="total">–</span
+          ><span class="label">All opens</span>
+        </article>
+      </div>
+
+      <div class="btn-row">
+        <button class="btn btn-secondary" id="refresh" type="button">
+          Refresh
+        </button>
+      </div>
+      <p class="meta" id="status">Loading…</p>
+      <p class="meta">
+        Counter service:
+        <a href="https://abacus.jasoncameron.dev/" rel="noopener">Abacus</a>
+        (free, no account). Namespace <code id="ns"></code>. Anyone with this
+        link can see these numbers; resetting needs the admin keys kept with the
+        project files.
+      </p>
+    </main>
+    <script>
+      (function () {
+        var NS = "mukuru-sixx-welcome-7d3f9a";
+        var BASE = "https://abacus.jasoncameron.dev/get/" + NS + "/";
+        document.getElementById("ns").textContent = NS;
+        var status = document.getElementById("status");
+
+        function read(key) {
+          return fetch(BASE + key, { cache: "no-store" })
+            .then(function (r) {
+              return r.ok ? r.json() : { value: 0 };
+            })
+            .then(function (j) {
+              return Number(j.value) || 0;
+            })
+            .catch(function () {
+              return null;
+            });
+        }
+
+        function load() {
+          status.textContent = "Loading…";
+          Promise.all([read("qr-scans"), read("direct")]).then(function (v) {
+            var qr = v[0],
+              direct = v[1];
+            if (qr === null || direct === null) {
+              status.textContent =
+                "Could not reach the counter service. Try again in a moment.";
+              return;
+            }
+            document.getElementById("qr").textContent =
+              qr.toLocaleString("en-GB");
+            document.getElementById("direct").textContent =
+              direct.toLocaleString("en-GB");
+            document.getElementById("total").textContent = (
+              qr + direct
+            ).toLocaleString("en-GB");
+            status.textContent =
+              "Updated " + new Date().toLocaleString("en-GB");
+          });
+        }
+
+        document.getElementById("refresh").addEventListener("click", load);
+        load();
+      })();
+    </script>
+  </body>
+</html>
