@@ -1,4 +1,4 @@
-/* Mukuru × Sixx Alfresco Bar & Braai — welcome page
+/* Mukuru welcome page (venue-generic, counted copy)
    Brand colours taken from mukuru.com CSS variables (checked 12 Sep 2026):
    --orange #F05423, --charcoal #373A36, --peach-orange #FFE0D6, --grey #E9E9EA, --teal #00A5A3.
    Darker orange (#BF3F15) is used only for small orange text so it meets WCAG AA (5.3:1 on white). */
@@ -23,6 +23,7 @@
   --grey: #e9e9ea;
   --teal: #00a5a3;
   --white: #ffffff;
+  --claim-over: #b3261e;
   --radius: 22px;
   --shadow: 0 10px 30px rgba(55, 58, 54, 0.1), 0 1px 3px rgba(55, 58, 54, 0.06);
   --maxw: 34rem;
@@ -836,4 +837,70 @@ h1 .brand {
     height: 3rem;
     margin-bottom: 0.8rem;
   }
+}
+
+/* ---------- Claim countdown (pint card) ---------- */
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  clip-path: inset(50%);
+  white-space: nowrap;
+  border: 0;
+}
+
+.claim {
+  margin: 0 0 0.9rem;
+  padding: 0.85rem 1rem 0.95rem;
+  border-radius: 14px;
+  background: var(--peach-soft);
+  border: 1px solid var(--peach);
+}
+
+.claim-fallback {
+  margin: 0;
+  font-weight: 700;
+  color: var(--ink);
+}
+
+.claim-label {
+  margin: 0;
+  font-size: 0.8rem;
+  font-weight: 800;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--orange-text);
+}
+
+.claim-time {
+  margin: 0.1rem 0 0;
+  font-size: clamp(2.6rem, 13vw, 3.4rem);
+  line-height: 1.05;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  font-variant-numeric: tabular-nums;
+  font-feature-settings: "tnum" 1;
+  color: var(--ink);
+}
+
+.claim-note {
+  margin: 0.15rem 0 0;
+  font-size: 0.92rem;
+  font-weight: 600;
+  color: var(--muted);
+}
+
+.claim.is-expired {
+  background: var(--grey);
+  border-color: #d6d6d8;
+}
+.claim.is-expired .claim-label {
+  color: var(--claim-over);
+}
+.claim.is-expired .claim-time {
+  color: var(--claim-over);
 }
